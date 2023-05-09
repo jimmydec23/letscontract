@@ -27,7 +27,11 @@ describe("MyToken", function () {
     });
     it("Should transfer right", async () => {
       const [acc1, acc2, otherAccount] = await ethers.getSigners()
-      expect(await contract.balanceOf(acc1)).to.equal(100)
+      expect(await contract.balanceOf(acc1.address)).to.equal(100)
+      expect(await contract.balanceOf(acc2.address)).to.equal(0)
+      await contract.transfer(acc2.address, 10)
+      expect(await contract.balanceOf(acc1.address)).to.equal(90)
+      expect(await contract.balanceOf(acc2.address)).to.equal(10)
     })
   });
 });
