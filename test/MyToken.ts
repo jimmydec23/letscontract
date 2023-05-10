@@ -26,12 +26,21 @@ describe("MyToken", function () {
       expect(await contract.decimals()).to.equal(18)
     });
     it("Should transfer right", async () => {
-      const [acc1, acc2, otherAccount] = await ethers.getSigners()
+      const [acc1, acc2, _] = await ethers.getSigners()
       expect(await contract.balanceOf(acc1.address)).to.equal(100)
       expect(await contract.balanceOf(acc2.address)).to.equal(0)
       await contract.transfer(acc2.address, 10)
       expect(await contract.balanceOf(acc1.address)).to.equal(90)
       expect(await contract.balanceOf(acc2.address)).to.equal(10)
+    })
+    it("Should transferFrom right", async() => {
+      const [acc1, acc2, acc3, _] = await ethers.getSigners()
+      await contract.approve(acc2.address, 10)
+      expect(await contract.allowance(acc1.address, acc2.address)).to.eq(10)
+      await contract.connect(acc2).transferFrom(acc1.address, acc3.address, 10)
+      expect(await contract.balanceOf(acc1.address)).to.eq(90)
+      expect(await contract.balanceOf(acc3.address)).to.eq(10)
+      expect(await contract.allowance(acc1.address, acc2.address)).to.eq(0)
     })
   });
 });
