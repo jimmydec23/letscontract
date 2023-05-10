@@ -32,6 +32,7 @@ describe("MyToken", function () {
       await contract.transfer(acc2.address, 10)
       expect(await contract.balanceOf(acc1.address)).to.equal(90)
       expect(await contract.balanceOf(acc2.address)).to.equal(10)
+      await expect(contract.transfer(acc2.address, 100)).to.be.reverted
     })
     it("Should transferFrom right", async() => {
       const [acc1, acc2, acc3, _] = await ethers.getSigners()
