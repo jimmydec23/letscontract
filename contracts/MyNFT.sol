@@ -109,26 +109,14 @@ interface IERC165 {
     function supportsInterface(bytes4 interfaceID) external view returns (bool);
 }
 
-/// @dev Note: the ERC-165 identifier for this interface is 0x150b7a02.
-interface IERC721Receiver {
-    /// @notice Handle the receipt of an NFT
-    /// @dev The ERC721 smart contract calls this function on the recipient
-    ///  after a `transfer`. This function MAY throw to revert and reject the
-    ///  transfer. Return of other than the magic value MUST result in the
-    ///  transaction being reverted.
-    ///  Note: the contract address is always the message sender.
-    /// @param _operator The address which called `safeTransferFrom` function
-    /// @param _from The address which previously owned the token
-    /// @param _tokenId The NFT identifier which is being transferred
-    /// @param _data Additional data with no specified format
-    ///  unless throwing
-    function onERC721Received(address _operator, address _from, uint256 _tokenId, bytes memory _data) external ;
-}
 
-contract ERC223Recipient is IERC721Receiver {
+/// @notice This contract can receive tokens from ERC721 contract.
+contract ERC223Recipient  {
     event TokenReceived(address, address, uint, bytes);
 
-    function onERC721Received(address _operator,address _from,uint256 _tokenId,bytes memory _data) external override  {
+    /// @notice when a contract receive a token, it should receive an event about the 
+    /// the detail for relative business. Here just simply trigger a receive event.
+    function onTokenReceived(address _operator,address _from,uint256 _tokenId,bytes memory _data) external {
         emit TokenReceived(_operator, _from, _tokenId, _data);
     }
 }
@@ -138,6 +126,7 @@ contract MyNFT is IERC721, IERC165 {
     string private _name;
     string private _symbol;
 
+    /// @notice an owner may owns multiple token, so this mapping has limitation.
     mapping (address => uint256) internal ownedTokens;
     mapping (uint256 => address) internal tokenOwner;
     mapping (address => uint256) internal ownedTokensCount;
@@ -168,7 +157,7 @@ contract MyNFT is IERC721, IERC165 {
     function mint(address to, uint256 tokenId) external {
         require( to != address(0), "address cannot be default null address");
         require(tokenId > 0, "token id cannot be zero or less!");
-        ownedTokens[to] += 1;
+        ownedTokensCount[to] += 1;
         tokenOwner[tokenId] = to;
         ownedTokens[to] = tokenId;
 
@@ -203,13 +192,16 @@ contract MyNFT is IERC721, IERC165 {
     }
 
     function safeTransferFrom(address from, address to, uint256 tokenId, bytes memory data) public override {
+        transferFrom(from, to, tokenId);
+
+        // check if token receiver is a contract
         uint256 length;
         assembly {
             length := extcodesize(to)
         }
-        transferFrom(from, to, tokenId);
+        // if token sends to a contract address, call the reciver contract function.
         if (length > 0) {
-            ERC223Recipient(to).onERC721Received(msg.sender ,from, tokenId, data);
+            ERC223Recipient(to).onTokenReceived(msg.sender ,from, tokenId, data);
         }
     }
 
