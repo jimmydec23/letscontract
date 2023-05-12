@@ -290,6 +290,8 @@ contract MyNFT is IERC721, IERC165 {
         emit Approval(owner, spender, tokenId);
     }
 
+    /// @notice owner decide to give all token permissions to operator or not.
+    /// @param _approved bool
     function setApprovalForAll(
         address operator,
         bool _approved
@@ -302,12 +304,14 @@ contract MyNFT is IERC721, IERC165 {
         emit ApprovalForAll(msg.sender, operator, _approved);
     }
 
+    /// @notice check who has the owner's permission of a token
     function getApproved(
         uint256 tokenId
     ) public view override returns (address operator) {
         return tokenApprovals[tokenId];
     }
 
+    /// @notice check if this operator has owner's permission
     function isApprovedForAll(
         address owner,
         address operator
