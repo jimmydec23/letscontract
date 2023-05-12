@@ -10,17 +10,29 @@ interface IERC721 {
     ///  (`to` == 0). Exception: during contract creation, any number of NFTs
     ///  may be created and assigned without emitting Transfer. At the time of
     ///  any transfer, the approved address for that NFT (if any) is reset to none.
-    event Transfer(address indexed _from, address indexed _to, uint256 indexed _tokenId);
+    event Transfer(
+        address indexed _from,
+        address indexed _to,
+        uint256 indexed _tokenId
+    );
 
     /// @dev This emits when the approved address for an NFT is changed or
     ///  reaffirmed. The zero address indicates there is no approved address.
     ///  When a Transfer event emits, this also indicates that the approved
     ///  address for that NFT (if any) is reset to none.
-    event Approval(address indexed _owner, address indexed _approved, uint256 indexed _tokenId);
+    event Approval(
+        address indexed _owner,
+        address indexed _approved,
+        uint256 indexed _tokenId
+    );
 
     /// @dev This emits when an operator is enabled or disabled for an owner.
     ///  The operator can manage all NFTs of the owner.
-    event ApprovalForAll(address indexed _owner, address indexed _operator, bool _approved);
+    event ApprovalForAll(
+        address indexed _owner,
+        address indexed _operator,
+        bool _approved
+    );
 
     /// @notice Count all NFTs assigned to an owner
     /// @dev NFTs assigned to the zero address are considered invalid, and this
@@ -48,7 +60,12 @@ interface IERC721 {
     /// @param _to The new owner
     /// @param _tokenId The NFT to transfer
     /// @param data Additional data with no specified format, sent in call to `_to`
-    function safeTransferFrom(address _from, address _to, uint256 _tokenId, bytes calldata data) external;
+    function safeTransferFrom(
+        address _from,
+        address _to,
+        uint256 _tokenId,
+        bytes calldata data
+    ) external;
 
     /// @notice Transfers the ownership of an NFT from one address to another address
     /// @dev This works identically to the other function with an extra data parameter,
@@ -56,7 +73,11 @@ interface IERC721 {
     /// @param _from The current owner of the NFT
     /// @param _to The new owner
     /// @param _tokenId The NFT to transfer
-    function safeTransferFrom(address _from, address _to, uint256 _tokenId) external;
+    function safeTransferFrom(
+        address _from,
+        address _to,
+        uint256 _tokenId
+    ) external;
 
     /// @notice Transfer ownership of an NFT -- THE CALLER IS RESPONSIBLE
     ///  TO CONFIRM THAT `_to` IS CAPABLE OF RECEIVING NFTS OR ELSE
@@ -68,7 +89,11 @@ interface IERC721 {
     /// @param _from The current owner of the NFT
     /// @param _to The new owner
     /// @param _tokenId The NFT to transfer
-    function transferFrom(address _from, address _to, uint256 _tokenId) external payable;
+    function transferFrom(
+        address _from,
+        address _to,
+        uint256 _tokenId
+    ) external payable;
 
     /// @notice Change or reaffirm the approved address for an NFT
     /// @dev The zero address indicates there is no approved address.
@@ -90,13 +115,18 @@ interface IERC721 {
     /// @dev Throws if `_tokenId` is not a valid NFT.
     /// @param _tokenId The NFT to find the approved address for
     /// @return _approved The approved address for this NFT, or the zero address if there is none
-    function getApproved(uint256 _tokenId) external view returns (address _approved);
+    function getApproved(
+        uint256 _tokenId
+    ) external view returns (address _approved);
 
     /// @notice Query if an address is an authorized operator for another address
     /// @param _owner The address that owns the NFTs
     /// @param _operator The address that acts on behalf of the owner
     /// @return True if `_operator` is an approved operator for `_owner`, false otherwise
-    function isApprovedForAll(address _owner, address _operator) external view returns (bool);
+    function isApprovedForAll(
+        address _owner,
+        address _operator
+    ) external view returns (bool);
 }
 
 interface IERC165 {
@@ -109,14 +139,18 @@ interface IERC165 {
     function supportsInterface(bytes4 interfaceID) external view returns (bool);
 }
 
-
 /// @notice This contract can receive tokens from ERC721 contract.
-contract ERC223Recipient  {
+contract ERC223Recipient {
     event TokenReceived(address, address, uint, bytes);
 
-    /// @notice when a contract receive a token, it should receive an event about the 
+    /// @notice when a contract receive a token, it should receive an event about the
     /// the detail for relative business. Here just simply trigger a receive event.
-    function onTokenReceived(address _operator,address _from,uint256 _tokenId,bytes memory _data) external {
+    function onTokenReceived(
+        address _operator,
+        address _from,
+        uint256 _tokenId,
+        bytes memory _data
+    ) external {
         emit TokenReceived(_operator, _from, _tokenId, _data);
     }
 }
@@ -127,35 +161,39 @@ contract MyNFT is IERC721, IERC165 {
     string private _symbol;
 
     /// @notice an owner may owns multiple token, so this mapping has limitation.
-    mapping (address => uint256) internal ownedTokens;
-    mapping (uint256 => address) internal tokenOwner;
-    mapping (address => uint256) internal ownedTokensCount;
-    mapping (address => mapping (address => bool)) operatorApprovals;
-    mapping (uint256 => address) tokenApprovals;
+    mapping(address => uint256) internal ownedTokens;
+    mapping(uint256 => address) internal tokenOwner;
+    mapping(address => uint256) internal ownedTokensCount;
+    mapping(address => mapping(address => bool)) operatorApprovals;
+    mapping(uint256 => address) tokenApprovals;
 
     constructor(string memory nameValue, string memory symbolValue) {
         _name = nameValue;
         _symbol = symbolValue;
     }
 
-    function name() public view  returns (string memory) {
-        return _name; 
+    function name() public view returns (string memory) {
+        return _name;
     }
 
     function symbol() public view returns (string memory) {
         return _symbol;
     }
 
-    function balanceOf(address owner) public view override returns (uint256 balance) {
+    function balanceOf(
+        address owner
+    ) public view override returns (uint256 balance) {
         return ownedTokensCount[owner];
     }
 
-    function ownerOf(uint256 tokenId) public view override returns (address owner) {
+    function ownerOf(
+        uint256 tokenId
+    ) public view override returns (address owner) {
         return tokenOwner[tokenId];
     }
 
     function mint(address to, uint256 tokenId) external {
-        require( to != address(0), "address cannot be default null address");
+        require(to != address(0), "address cannot be default null address");
         require(tokenId > 0, "token id cannot be zero or less!");
         ownedTokensCount[to] += 1;
         tokenOwner[tokenId] = to;
@@ -174,12 +212,25 @@ contract MyNFT is IERC721, IERC165 {
         emit Transfer(from, address(0), tokenId);
     }
 
-    function transferFrom(address from, address to, uint256 tokenId) public payable {
-        require(from != address(0), "from address cannot be default null address");
-        require(to != address(0), "from address cannot be default null address");
+    function transferFrom(
+        address from,
+        address to,
+        uint256 tokenId
+    ) public payable {
+        require(
+            from != address(0),
+            "from address cannot be default null address"
+        );
+        require(
+            to != address(0),
+            "from address cannot be default null address"
+        );
         require(tokenId > 0, "token id cannot be zero or less!");
         require(ownedTokensCount[from] > 0, "from address should own a token!");
-        require(tokenOwner[tokenId] == from, "from address should own a token!");
+        require(
+            tokenOwner[tokenId] == from,
+            "from address should own a token!"
+        );
         ownedTokensCount[from] = ownedTokensCount[from] - 1;
         ownedTokensCount[to] = ownedTokensCount[to] + 1;
 
@@ -191,7 +242,12 @@ contract MyNFT is IERC721, IERC165 {
         emit Transfer(from, to, tokenId);
     }
 
-    function safeTransferFrom(address from, address to, uint256 tokenId, bytes memory data) public override {
+    function safeTransferFrom(
+        address from,
+        address to,
+        uint256 tokenId,
+        bytes memory data
+    ) public override {
         transferFrom(from, to, tokenId);
 
         // check if token receiver is a contract
@@ -199,41 +255,71 @@ contract MyNFT is IERC721, IERC165 {
         assembly {
             length := extcodesize(to)
         }
-        // if token sends to a contract address, call the reciver contract function.
+        // if token sends to a contract address, 
+        // call the reciver contract function.
         if (length > 0) {
-            ERC223Recipient(to).onTokenReceived(msg.sender ,from, tokenId, data);
+            ERC223Recipient(to).onTokenReceived(
+                msg.sender,
+                from,
+                tokenId,
+                data
+            );
         }
     }
 
-    function safeTransferFrom(address from, address to, uint256 tokenId) external override {
+    function safeTransferFrom(
+        address from,
+        address to,
+        uint256 tokenId
+    ) external override {
         safeTransferFrom(from, to, tokenId, "");
     }
 
     function approve(address spender, uint256 tokenId) external override {
         require(tokenId > 0, "token id cannot be zero or less!");
-        require(spender != address(0), "spender address cannot be default null address");
+        require(
+            spender != address(0),
+            "spender address cannot be default null address"
+        );
         address owner = tokenOwner[tokenId];
-        require(msg.sender == owner || operatorApprovals[owner][msg.sender], "not owner nor approved for all");
+        require(
+            msg.sender == owner || operatorApprovals[owner][msg.sender],
+            "not owner nor approved for all"
+        );
         tokenApprovals[tokenId] = spender;
         emit Approval(owner, spender, tokenId);
     }
 
-    function setApprovalForAll(address operator,bool _approved) external override {
-        require(operator != address(0), "operator address cannot be default null address");
+    function setApprovalForAll(
+        address operator,
+        bool _approved
+    ) external override {
+        require(
+            operator != address(0),
+            "operator address cannot be default null address"
+        );
         operatorApprovals[msg.sender][operator] = _approved;
         emit ApprovalForAll(msg.sender, operator, _approved);
     }
 
-    function getApproved(uint256 tokenId) public view override returns (address operator) {
+    function getApproved(
+        uint256 tokenId
+    ) public view override returns (address operator) {
         return tokenApprovals[tokenId];
     }
 
-    function isApprovedForAll(address owner,address operator) public view override returns (bool) {
+    function isApprovedForAll(
+        address owner,
+        address operator
+    ) public view override returns (bool) {
         return operatorApprovals[owner][operator];
     }
 
-    function supportsInterface(bytes4 interfaceId) external pure override returns (bool) {
-        return interfaceId == type(IERC721).interfaceId ||
+    function supportsInterface(
+        bytes4 interfaceId
+    ) external pure override returns (bool) {
+        return
+            interfaceId == type(IERC721).interfaceId ||
             interfaceId == type(IERC165).interfaceId;
     }
 }
