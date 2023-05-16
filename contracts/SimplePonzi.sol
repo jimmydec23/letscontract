@@ -16,8 +16,14 @@ contract SimplePonzi {
         currentInvestment = msg.value;
 
         // payout previous investor
-        // use send instead of transfer
-        payable(previousInvestor).send(msg.value);
+        // send: return ture of false
+        // transfer: throw exception when execution failed
+        // both have a gas stipend of 2300 to againest reentrancy
+        // after Istanbul update(cost increase, 2300 is not engough), 
+        // call is recommented.
+        //payable(previousInvestor).transfer(msg.value);
+        (bool success,) = previousInvestor.call{value: msg.value}("");
+        require(success, "Transfer failed.");
     }
     
     receive() external payable {}
