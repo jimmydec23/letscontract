@@ -7,3 +7,4 @@ Let's write contract!
 * [Implemention of ERC20 token](contracts/MyToken.sol)
 * [Implemention of ERC721 NFT](contracts/MyNFT.sol)
 * [Data modeling with Employee example](contracts/Employee.sol)
+* [Simple Ponzi contract](contracts/SimplePonzi.sol)
