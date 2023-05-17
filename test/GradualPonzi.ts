@@ -3,12 +3,12 @@ import { expect } from "chai"
 import { Contract } from "ethers"
 import { ethers } from "hardhat"
 
-describe("SimplePonzi", function () {
+describe("GradualPonzi", function () {
   let contract: Contract 
 
   // deploy contract
   const fixture = async () => {
-    const Contract = await ethers.getContractFactory("SimplePonzi")
+    const Contract = await ethers.getContractFactory("GradualPonzi")
     const contract = await Contract.deploy()
     return contract
   }
@@ -18,7 +18,7 @@ describe("SimplePonzi", function () {
     contract = await loadFixture(fixture)
   })
 
-  describe("SimplePonzi", function () {
+  describe("GradualPonzi", function () {
     it("Should function right", async () => {
       const [acc1, acc2, acc3, _] = await ethers.getSigners()
       console.log(
@@ -27,21 +27,14 @@ describe("SimplePonzi", function () {
         ethers.utils.formatEther(await ethers.provider.getBalance(acc3.address)),
       )
 
-      // injust a function signature into contract
-      const hahaFunSig = 'haha() payable'
-      const simContract = new ethers.Contract(
-        contract.address,
-        [...contract.interface.fragments, `function ${hahaFunSig}`],
-        acc1,
-      )
-      await simContract.haha({value: ethers.utils.parseEther("1.0") })
+      await contract.invest({value: ethers.utils.parseEther("1.0") })
       console.log(
         ethers.utils.formatEther(await ethers.provider.getBalance(acc1.address)),
         ethers.utils.formatEther(await ethers.provider.getBalance(acc2.address)),
         ethers.utils.formatEther(await ethers.provider.getBalance(acc3.address)),
       )
       await expect(
-        simContract.haha({value: ethers.utils.parseEther("1.0")})
+        contract.invest({value: ethers.utils.parseEther("0.00001")})
       ).to.be.revertedWith("require minimum investment")
     });
   });
