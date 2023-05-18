@@ -9,3 +9,4 @@ Let's write contract!
 * [Data modeling with Employee example](contracts/Employee.sol)
 * [Simple Ponzi contract](contracts/SimplePonzi.sol)
 * [Gradual Ponzi contract](contracts/GradualPonzi.sol)
+* [Simple Pyramid contract](contracts/SimplePyramid.sol)
