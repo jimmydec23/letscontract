@@ -10,14 +10,14 @@ contract SimplePyramid {
     address[] public investors;
     mapping(address => uint) public balances;
 
-    /// @notice init parametors
+    /// @notice init parametors, contract address holds balance at first
     constructor() payable {
         require(msg.value >= MINIMUM_INVESTMENT);
         investors.push(msg.sender);
         numInvestors = 1;
         depth = 1;
         depthIncreasePosition = 3;
-        balances[msg.sender] = msg.value;
+        balances[address(this)] = msg.value;
     }
 
     /// @notice investor tree like this:
@@ -29,9 +29,9 @@ contract SimplePyramid {
     /// when depth(L) is full, all investors in depth(L-1) will get back
     /// their investment and the remain money will be share to every one. 
     function invest() payable public {
-        require(msg.value >= MINIMUM_INVESTMENT);
+        require(msg.value >= MINIMUM_INVESTMENT, "require minimum investment");
         // update investors document
-        balances[msg.sender] += msg.value;
+        balances[address(this)] += msg.value;
         numInvestors += 1;
         investors.push(msg.sender);
         // old investor share the money
@@ -44,7 +44,7 @@ contract SimplePyramid {
             }
             // spread remaining ether among all participants
             uint paid = MINIMUM_INVESTMENT * 2 ** (depth - 1);
-            uint eachInvestorGets = (balances[msg.sender] - paid) / numInvestors;
+            uint eachInvestorGets = (balances[address(this)] - paid) / numInvestors;
             for(uint i=0; i < numInvestors; i++){
                 balances[investors[i]] += eachInvestorGets;
             }
@@ -59,5 +59,10 @@ contract SimplePyramid {
         uint payout = balances[msg.sender];
         balances[msg.sender] = 0;
         payable(msg.sender).transfer(payout);
+    }
+
+    /// @notice check token owner balance
+    function balanceOf(address _owner) public view returns (uint256 balance) {
+        return balances[_owner];
     }
 }
