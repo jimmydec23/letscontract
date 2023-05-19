@@ -111,18 +111,23 @@ contract Government {
 
     receive() external payable{}
 
+    /// @notice The government owes investors 
+    /// whose order behide (include) lastCreditorPayedOut 
     function totalDept() public view returns (uint debt) {
         for (uint i = lastCreditorPayedOut; i < creditorAmounts.length; i++ ){
             debt += creditorAmounts[i];
         }
     }
 
+    /// @notice investors whose order before lastCreditorPayedOut
+    /// already get their mondy back
     function totalPayedOut() public view returns (uint payout) {
         for (uint i = 0; i < lastCreditorPayedOut; i++) {
             payout += creditorAmounts[i];
         }
     }
     
+    /// @notice increase the jackpot
     function investInTheSystem() public payable {
         profitFromCrash += msg.value;
     }
@@ -134,10 +139,12 @@ contract Government {
         }
     }
 
+    /// @notice return all creditor address
     function getCreditorAddresses() public view returns (address[] memory) {
         return creditorAddresses;
     }
 
+    /// @notice return all creditor amounts
     function getCreditorAmounts() public view returns (uint[] memory) {
         return creditorAmounts;
     }
