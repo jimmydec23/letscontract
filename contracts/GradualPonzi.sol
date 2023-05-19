@@ -27,4 +27,5 @@ contract GradualPonzi {
         balancees[msg.sender] = 0;
         payable(msg.sender).transfer(payout);
     }
+
 }
