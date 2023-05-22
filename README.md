@@ -11,3 +11,4 @@ Let's write contract!
 * [Gradual Ponzi contract](contracts/GradualPonzi.sol)
 * [Simple Pyramid contract](contracts/SimplePyramid.sol)
 * [Gavernment contract](contracts/Government.sol)
+* [Simple Lottery contract](contracts/SimpleLottery.sol)
