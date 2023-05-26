@@ -15,3 +15,4 @@ Let's write contract!
 * [Recurring Lottery contract](contracts/RecurringLottery.sol)
 * [RNg Lottery contract](contracts/RNGLottery.sol)
 * [Powerball contract](contracts/Powerball.sol)
+* [Simple Prize contract](contracts/SimplePrize.sol)
