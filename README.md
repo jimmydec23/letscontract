@@ -16,3 +16,4 @@ Let's write contract!
 * [RNg Lottery contract](contracts/RNGLottery.sol)
 * [Powerball contract](contracts/Powerball.sol)
 * [Simple Prize contract](contracts/SimplePrize.sol)
+* [Commit Reveal Puzzle contract](contracts/CommitRevealPuzzle.sol)
