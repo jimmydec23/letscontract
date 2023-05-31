@@ -18,3 +18,4 @@ Let's write contract!
 * [Simple Prize contract](contracts/SimplePrize.sol)
 * [Commit Reveal Puzzle contract](contracts/CommitRevealPuzzle.sol)
 * [Prediction Market contract](contracts/PredictionMarket.sol)
+* [Satoshi Dice contract](contracts/SatoshiDice.sol)
