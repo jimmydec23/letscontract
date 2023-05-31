@@ -19,3 +19,4 @@ Let's write contract!
 * [Commit Reveal Puzzle contract](contracts/CommitRevealPuzzle.sol)
 * [Prediction Market contract](contracts/PredictionMarket.sol)
 * [Satoshi Dice contract](contracts/SatoshiDice.sol)
+* [Roulette contract](contracts/CasinoRoulette.sol)
