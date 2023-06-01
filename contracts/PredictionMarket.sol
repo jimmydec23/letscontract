@@ -200,4 +200,7 @@ contract PredictionMarket {
         payable(msg.sender).transfer(payout);
         emit Payout(msg.sender, payout);
     }
+
+    /// @notice fund the contract
+    function fund() public payable {}
 }
